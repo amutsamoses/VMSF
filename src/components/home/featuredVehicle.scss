@@ -1,0 +1,60 @@
+// FeaturedVehicles.module.scss
+
+$primary-color: #4caf50;
+$secondary-color: #312e2e;
+$background-color: #f4f4f4;
+$border-color: #ccc;
+$hover-color: #e0e0e0;
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+
+.car-card {
+  background-color: $background-color;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  transition:
+    transform 0.2s,
+    background-color 0.2s;
+
+  &:hover {
+    background-color: $hover-color;
+    transform: translateY(-5px);
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin-top: 0;
+    color: $primary-color;
+  }
+
+  p {
+    margin: 8px 0;
+    color: $secondary-color;
+
+    &:nth-of-type(odd) {
+      color: darken($primary-color, 20%);
+    }
+  }
+}
+
+.availability {
+  font-weight: bold;
+  color: $primary-color;
+
+  &.not-available {
+    color: red;
+  }
+}
