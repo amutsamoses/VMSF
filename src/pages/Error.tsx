@@ -1,9 +1,18 @@
 import { Link, useRouteError } from "react-router-dom";
-
 import { ArrowLeft } from "lucide-react";
 
 function Error() {
-  const error: unknown = useRouteError();
+  const error = useRouteError();
+
+  const errorMessage = (() => {
+    if (error && typeof error === 'object' && 'statusText' in error) {
+      return (error as { statusText?: string }).statusText;
+    } else if (error && typeof error === 'object' && 'message' in error) {
+      return (error as { message?: string }).message;
+    } else {
+      return 'Unknown error occurred';
+    }
+  })();
 
   return (
     <div className="py-10  bg:base-100">
@@ -13,9 +22,9 @@ function Error() {
           Page not found
         </h1>
         <p className="mt-4 text-base leading-7 text-gray-600">
-          Sorry, we couldn&apos:t find the page you&apos;re looking for.
+          Sorry, we couldn&apos;t find the page you&apos;re looking for.
         </p>
-        <p>{error?.statusText || error.message}</p>
+        <p>{errorMessage}</p>
         <div className="mt-4 flex items-center justify-center gap-x-3">
           <Link
             to="/"
