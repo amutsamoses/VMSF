@@ -1,10 +1,10 @@
 // FeaturedVehicles.module.scss
 
 $primary-color: #4caf50;
-$secondary-color: #312e2e;
-$background-color: #f4f4f4;
-$border-color: #ccc;
-$hover-color: #e0e0e0;
+$secondary-color: #f8f3f3;
+$background-color: #121f2c;
+$border-color: #381bdc;
+$hover-color: #515188;
 
 .grid-container {
   display: grid;
@@ -45,7 +45,7 @@ $hover-color: #e0e0e0;
     color: $secondary-color;
 
     &:nth-of-type(odd) {
-      color: darken($primary-color, 20%);
+      color: darken($secondary-color, 20%);
     }
   }
 }

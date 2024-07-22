@@ -1,0 +1,36 @@
+.header-buttons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .search-bar {
+    flex-grow: 1;
+    margin: 0 16px;
+  }
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.vehicle-card {
+  display: flex;
+  flex-direction: column;
+  .vehicle-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .vehicle-details {
+    padding: 16px;
+
+    .vehicle-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}

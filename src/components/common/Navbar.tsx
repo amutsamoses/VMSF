@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Profile from "../authentication/Profile";
 
 const Navbar: React.FC = () => {
   return (
@@ -27,21 +28,16 @@ const Navbar: React.FC = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Item 1</a>
+              <Link to="/">Home</Link>
             </li>
             <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
+              <Link to="/about">About Us</Link>
             </li>
             <li>
-              <a>Item 3</a>
+              <Link to="/contact">Contact Us</Link>
+            </li>
+            <li>
+              <Link to="/cars">Cars</Link>
             </li>
           </ul>
         </div>
@@ -52,7 +48,7 @@ const Navbar: React.FC = () => {
           <li>
             <Link
               to="/"
-              className="mr-4 text-gray-200 hover:text-gray-600 font-medium"
+              className="text-gray-600 hover:text-gray-600 font-medium"
             >
               Home
             </Link>
@@ -62,7 +58,23 @@ const Navbar: React.FC = () => {
               to="/about"
               className="text-gray-200 hover:text-gray-600 font-medium"
             >
-              About
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/contact"
+              className="text-gray-200 hover:text-gray-600 font-medium"
+            >
+              Contact Us
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/vehicles"
+              className="text-gray-200 hover:text-gray-600 font-medium"
+            >
+              Cars
             </Link>
           </li>
         </ul>
@@ -76,10 +88,11 @@ const Navbar: React.FC = () => {
         </Link>
         <Link
           to="/register"
-          className="text-gray-200 hover:text-gray-600 font-medium"
+          className="mr-4 text-gray-200 hover:text-gray-600 font-medium"
         >
           Register
         </Link>
+        <Profile />
       </div>
     </div>
   );

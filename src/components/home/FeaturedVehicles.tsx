@@ -7,9 +7,7 @@ interface Car {
   enginePower: string;
   year: number;
   company: string;
-  rentalRate: number;
-  availability: boolean;
-  imageUrl: string; // Add this property for the image URL
+  imageUrl: string;
 }
 
 const cars: Car[] = [
@@ -19,9 +17,8 @@ const cars: Car[] = [
     enginePower: "670 hp",
     year: 2022,
     company: "Tesla",
-    rentalRate: 150,
-    availability: true,
-    imageUrl: "path/to/tesla-model-s.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
     name: "Mustang",
@@ -29,9 +26,8 @@ const cars: Car[] = [
     enginePower: "450 hp",
     year: 2021,
     company: "Ford",
-    rentalRate: 120,
-    availability: false,
-    imageUrl: "path/to/ford-mustang.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
     name: "Civic",
@@ -39,9 +35,8 @@ const cars: Car[] = [
     enginePower: "158 hp",
     year: 2020,
     company: "Honda",
-    rentalRate: 80,
-    availability: true,
-    imageUrl: "path/to/honda-civic.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/707046/pexels-photo-707046.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
     name: "Camry",
@@ -49,9 +44,8 @@ const cars: Car[] = [
     enginePower: "203 hp",
     year: 2021,
     company: "Toyota",
-    rentalRate: 90,
-    availability: true,
-    imageUrl: "path/to/toyota-camry.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/136872/pexels-photo-136872.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
     name: "A4",
@@ -59,9 +53,8 @@ const cars: Car[] = [
     enginePower: "201 hp",
     year: 2022,
     company: "Audi",
-    rentalRate: 140,
-    availability: false,
-    imageUrl: "path/to/audi-a4.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/1638459/pexels-photo-1638459.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
     name: "3 Series",
@@ -69,9 +62,8 @@ const cars: Car[] = [
     enginePower: "255 hp",
     year: 2022,
     company: "BMW",
-    rentalRate: 160,
-    availability: true,
-    imageUrl: "path/to/bmw-3-series.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/575386/pexels-photo-575386.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
     name: "Cherokee",
@@ -79,9 +71,8 @@ const cars: Car[] = [
     enginePower: "271 hp",
     year: 2021,
     company: "Jeep",
-    rentalRate: 110,
-    availability: true,
-    imageUrl: "path/to/jeep-cherokee.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/225841/pexels-photo-225841.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
     name: "Accord",
@@ -89,9 +80,8 @@ const cars: Car[] = [
     enginePower: "192 hp",
     year: 2021,
     company: "Honda",
-    rentalRate: 95,
-    availability: false,
-    imageUrl: "path/to/honda-accord.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/119435/pexels-photo-119435.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
     name: "Altima",
@@ -99,9 +89,8 @@ const cars: Car[] = [
     enginePower: "188 hp",
     year: 2020,
     company: "Nissan",
-    rentalRate: 85,
-    availability: true,
-    imageUrl: "path/to/nissan-altima.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/39855/lamborghini-brno-racing-car-automobiles-39855.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
     name: "RX",
@@ -109,9 +98,8 @@ const cars: Car[] = [
     enginePower: "295 hp",
     year: 2021,
     company: "Lexus",
-    rentalRate: 130,
-    availability: true,
-    imageUrl: "path/to/lexus-rx.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/3311574/pexels-photo-3311574.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
     name: "Golf",
@@ -119,9 +107,8 @@ const cars: Car[] = [
     enginePower: "241 hp",
     year: 2022,
     company: "Volkswagen",
-    rentalRate: 115,
-    availability: true,
-    imageUrl: "path/to/vw-golf.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/810357/pexels-photo-810357.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
   {
     name: "Impala",
@@ -129,31 +116,40 @@ const cars: Car[] = [
     enginePower: "305 hp",
     year: 2020,
     company: "Chevrolet",
-    rentalRate: 100,
-    availability: false,
-    imageUrl: "path/to/chevrolet-impala.jpg",
+    imageUrl:
+      "https://images.pexels.com/photos/849835/pexels-photo-849835.jpeg?auto=compress&cs=tinysrgb&w=400",
   },
 ];
 
 const FeaturedVehicles: React.FC = () => {
   return (
-    <div className="grid-container">
-      {cars.map((car, index) => (
-        <div key={index} className="car-card">
-          <img src={car.imageUrl} alt={`${car.name} ${car.model}`} />
-          <h3>{car.name}</h3>
-          <p>Model: {car.model}</p>
-          <p>Engine Power: {car.enginePower}</p>
-          <p>Year: {car.year}</p>
-          <p>Company: {car.company}</p>
-          <p>Rental Rate: ${car.rentalRate}/day</p>
-          <p
-            className={`$"availability" ${!car.availability ? "not-available" : ""}`}
-          >
-            Availability: {car.availability ? "Available" : "Not Available"}
-          </p>
-        </div>
-      ))}
+    <div className="featured-vehicles">
+      <div className="heading text-center my-8">
+        <h2 className="text-3xl font-bold text-blue-600">Featured Vehicles</h2>
+        <p className="text-lg text-gray-200 mt-2">
+          Discover our range of top-quality vehicles available for rental. We
+          offer a wide variety of cars to meet your needs, from high-performance
+          sports cars to reliable family vehicles.
+        </p>
+      </div>
+      <div className="grid-container">
+        {cars.map((car, index) => (
+          <div key={index} className="car-card">
+            <img
+              src={car.imageUrl}
+              alt={`${car.name} ${car.model}`}
+              className="w-full h-40 object-cover rounded-md"
+            />
+            <div className="p-4">
+              <h3 className="text-xl font-semibold">{car.name}</h3>
+              <p>Model: {car.model}</p>
+              <p>Engine Power: {car.enginePower}</p>
+              <p>Year: {car.year}</p>
+              <p>Company: {car.company}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

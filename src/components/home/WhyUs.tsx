@@ -1,7 +1,4 @@
-// src/components/WhyUs.tsx
-
 import "./whyus.scss";
-
 import { Phone, BadgePercent, MapPin } from "lucide-react";
 
 const WhyUs = () => {
@@ -9,8 +6,9 @@ const WhyUs = () => {
     <div className="why-us-container">
       <div className="image-container">
         <img
-          src="path-to-image/Screenshot 2024-07-09 154141.png"
-          alt="Why choose us"
+          src="https://cdni.iconscout.com/illustration/premium/thumb/business-partnership-2975816-2476892.png"
+          style={{ marginTop: "50px" }}
+          alt=""
         />
       </div>
       <div className="content-container">

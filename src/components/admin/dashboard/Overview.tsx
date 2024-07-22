@@ -20,6 +20,12 @@ const data = [
   { name: "July", bookings: 3490, revenue: 4300, amt: 2100 },
 ];
 
+// Calculate total cars rented and total revenue collected
+const totalCarsRented = data.reduce((acc, curr) => acc + curr.bookings, 0);
+const totalRevenueCollected = data.reduce((acc, curr) => acc + curr.revenue, 0);
+
+const currentBooking = 25; // Example current booking count
+
 const Overview = () => {
   return (
     <Grid container spacing={3}>
@@ -45,6 +51,33 @@ const Overview = () => {
               <Bar dataKey="revenue" fill="#82ca9d" />
             </BarChart>
           </ResponsiveContainer>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} sm={6} md={4}>
+        <Paper
+          sx={{ p: 2, display: "flex", flexDirection: "column", height: 150 }}
+        >
+          <Typography variant="h6">Total Cars Rented</Typography>
+          <Typography variant="h4">{totalCarsRented}</Typography>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} sm={6} md={4}>
+        <Paper
+          sx={{ p: 2, display: "flex", flexDirection: "column", height: 150 }}
+        >
+          <Typography variant="h6">Total Revenue Collected</Typography>
+          <Typography variant="h4">${totalRevenueCollected}</Typography>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} sm={6} md={4}>
+        <Paper
+          sx={{ p: 2, display: "flex", flexDirection: "column", height: 150 }}
+        >
+          <Typography variant="h6">Current Bookings Made</Typography>
+          <Typography variant="h4">{currentBooking}</Typography>
         </Paper>
       </Grid>
     </Grid>

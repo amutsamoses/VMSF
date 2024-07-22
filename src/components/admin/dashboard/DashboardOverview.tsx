@@ -7,9 +7,17 @@ import {
   Typography,
   IconButton,
   Container,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SwipeableTemporaryDrawer from "./SwipeableTemporaryDrawer";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
 import Overview from "./Overview";
 import ManageVehicles from "./ManageVehicles";
 import ManageUsers from "./ManageUser";
@@ -17,6 +25,9 @@ import Reports from "./Reports";
 import LocationsBranches from "./LocationBr";
 import CustomerSupport from "./CustomerSupport";
 import FleetManagement from "./FleetMng";
+import Home from "../../../pages/Home";
+
+const drawerWidth = 240;
 
 export default function Dashboard() {
   const [selectedPage, setSelectedPage] = React.useState("Overview");
@@ -37,6 +48,9 @@ export default function Dashboard() {
         return <CustomerSupport />;
       case "Fleet Management":
         return <FleetManagement />;
+      case "Home":
+        return <Home />;
+
       default:
         return <Overview />;
     }
@@ -55,6 +69,7 @@ export default function Dashboard() {
             aria-label="open drawer"
             edge="start"
             onClick={() => setSelectedPage("Overview")}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -63,8 +78,52 @@ export default function Dashboard() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <SwipeableTemporaryDrawer />
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: "border-box",
+          },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: "auto" }}>
+          <List>
+            {[
+              "Overview",
+              "Manage Vehicles",
+              "Manage Users",
+              "Reports",
+              "Locations & Branches",
+              "Customer Support",
+              "Fleet Management",
+              //a new item that routes back to home page
+              "Home",
+            ].map((text, index) => (
+              <ListItem
+                key={text}
+                disablePadding
+                onClick={() => setSelectedPage(text)}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+        </Box>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 3, marginLeft: `${drawerWidth}px` }}
+      >
         <Toolbar />
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           {renderPage()}

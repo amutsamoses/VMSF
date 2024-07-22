@@ -1,10 +1,12 @@
-// authentication/Logout.tsx
-
 import React from "react";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
 
 const Logout: React.FC = () => {
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
-    // Handle logout logic
+    dispatch(logout());
   };
 
   return (
