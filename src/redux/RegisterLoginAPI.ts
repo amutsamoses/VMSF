@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TLogin, TRegister, TUser } from "../types";
-import { devDomain } from "../utils/constants";
+import { prodDomain } from "../utils/constants";
 
 export interface AuthResponse {
   user: TUser;
@@ -13,7 +13,7 @@ export const registerLoginApi = createApi({
   reducerPath: "registerLoginApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
+  baseQuery: fetchBaseQuery({ baseUrl: prodDomain }),
 
   //tag types
   tagTypes: ["RegisterLogin"],

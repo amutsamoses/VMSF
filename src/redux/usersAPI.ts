@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TUser } from "../types";
-import { devDomain } from "../utils/constants";
+import { prodDomain } from "../utils/constants";
 
 //create user api slice
 export const usersApi = createApi({
@@ -8,7 +8,7 @@ export const usersApi = createApi({
   reducerPath: "usersApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
+  baseQuery: fetchBaseQuery({ baseUrl: prodDomain }),
 
   //tag types
   tagTypes: ["User"],

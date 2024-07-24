@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TBooking } from "../types";
-import { devDomain } from "../utils/constants";
+import { prodDomain  } from "../utils/constants";
 
 //create booking api slice
 
@@ -9,7 +9,7 @@ export const bookingsApi = createApi({
   reducerPath: "bookingsApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
+  baseQuery: fetchBaseQuery({ baseUrl: prodDomain }),
 
   //tag types
   tagTypes: ["Booking"],

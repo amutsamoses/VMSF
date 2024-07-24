@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TPayment } from "../types";
-import { devDomain } from "../utils/constants";
+import { prodDomain } from "../utils/constants";
 
 //create payment api slice
 export const paymentsApi = createApi({
   reducerPath: "paymentsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
+  baseQuery: fetchBaseQuery({ baseUrl: prodDomain }),
   tagTypes: ["Payment"],
 
   endpoints: (builder) => ({

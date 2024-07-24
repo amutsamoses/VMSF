@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TVehicle } from "../types";
-import { devDomain } from "../utils/constants";
+import { prodDomain } from "../utils/constants";
 
 //create vehicle api slice
 export const vehiclesApi = createApi({
@@ -8,7 +8,7 @@ export const vehiclesApi = createApi({
   reducerPath: "vehiclesApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
+  baseQuery: fetchBaseQuery({ baseUrl: prodDomain }),
 
   //tag types
   tagTypes: ["Vehicle"],

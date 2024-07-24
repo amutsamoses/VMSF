@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TCustomerSupport } from "../types";
-import { devDomain } from "../utils/constants";
+import { prodDomain } from "../utils/constants";
 
 //create a slice
 export const customerSupportApi = createApi({
@@ -8,7 +8,7 @@ export const customerSupportApi = createApi({
   reducerPath: "customerSupportApi",
 
   //baseQuery
-  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
+  baseQuery: fetchBaseQuery({ baseUrl: prodDomain }),
 
   //tagTypes
   tagTypes: ["CustomerSupport"],
