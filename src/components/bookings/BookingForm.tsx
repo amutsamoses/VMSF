@@ -29,7 +29,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
   const [addBooking, { isLoading: isLoadingBooking }] =
     bookingsApi.useCreateBookingMutation();
   const [createPayment] = paymentsApi.useCreatePaymentMutation();
-  const [updateStatus] = bookingsApi.useCreateBookingMutation();
+  const [updateStatus] = bookingsApi.useUpdateBookingMutation();
   const [isPaymentLoading, setIsPaymentLoading] = useState<number | null>(null);
 
   const handleBooking = async () => {
@@ -83,10 +83,15 @@ const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
       toast.success("Payment initiated successfully");
       console.log("Payment response:", res);
       if (res.url) {
+        console.log("Redirecting to Stripe checkout URL:", res.url);
         window.location.href = res.url; // Redirect to the Stripe checkout URL
       } else {
         const stripe = await stripePromise;
         if (stripe && res.transaction_id) {
+          console.log(
+            "Redirecting to checkout with session ID:",
+            res.booking_id
+          );
           const { error } = await stripe.redirectToCheckout({
             sessionId: res.transaction_id,
           });
@@ -94,7 +99,6 @@ const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
             console.error("Error redirecting to checkout:", error);
             toast.error("Error redirecting to checkout");
           } else {
-            //update booking status
             await updateStatus({
               booking_id: bookingId,
               booking_status: "Completed",
@@ -106,6 +110,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
       console.error("Error initiating payment:", error);
       toast.error("Error initiating payment");
 
+      // If payment fails, update booking status to "Cancelled"
       await updateStatus({
         booking_id: bookingId,
         booking_status: "Cancelled",

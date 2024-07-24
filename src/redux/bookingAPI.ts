@@ -50,10 +50,10 @@ export const bookingsApi = createApi({
     //update booking
     updateBooking: builder.mutation<
       TBooking,
-      { id: number; booking_status: string }
+      { booking_id: number; booking_status: string }
     >({
-      query: ({ id, booking_status }) => ({
-        url: `/bookings/${id}/booking_status`,
+      query: ({ booking_id, booking_status }) => ({
+        url: `/bookings/${booking_id}/booking_status`,
         method: "PUT",
         body: { booking_status },
         providesTags: [{ type: "Booking", id: "LIST" }],

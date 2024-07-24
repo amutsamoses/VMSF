@@ -10,6 +10,7 @@ import { bookingsApi } from "../bookingAPI";
 import { registerLoginApi } from "../RegisterLoginAPI";
 import { customerSupportApi } from "../customerAPI";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { paymentsApi } from "../paymentAPI";
 
 // persist configuration
 const persistConfig = {
@@ -27,6 +28,7 @@ const rootReducer: Reducer = combineReducers({
   [bookingsApi.reducerPath]: bookingsApi.reducer,
   [registerLoginApi.reducerPath]: registerLoginApi.reducer,
   [customerSupportApi.reducerPath]: customerSupportApi.reducer,
+  [paymentsApi.reducerPath]: paymentsApi.reducer,
 });
 
 //persisted reducer
@@ -51,7 +53,8 @@ export const store: ReturnType<typeof configureStore> = configureStore({
       fleetApi.middleware,
       bookingsApi.middleware,
       registerLoginApi.middleware,
-      customerSupportApi.middleware
+      customerSupportApi.middleware,
+      paymentsApi.middleware
     ),
 });
 
