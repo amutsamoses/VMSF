@@ -12,6 +12,7 @@ import VehicleList from "./components/vehicleList/VehicleList";
 import ContactUs from "./pages/ContactUs";
 import BookingPage from "./components/bookings/BookingPage";
 import ManageVehicles from "./components/admin/dashboard/ManageVehicles";
+import ProtectedRoute from "./services/ProtectedRoute";
 
 const App: React.FC = () => {
   return (
@@ -25,7 +26,9 @@ const App: React.FC = () => {
         <Route path="/logout" Component={Logout} />
         <Route path="/dashboard" Component={Dashboard} />
         <Route path="/user-dashboard" Component={UserDashboard} />
-        <Route path="/vehicles" Component={VehicleList} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/vehicles" Component={VehicleList} />
+        </Route>
         <Route path="/contact" Component={ContactUs} />
         <Route path="/booking/:id" Component={BookingPage} />
         <Route path="/manage-vehicles" Component={ManageVehicles} />
