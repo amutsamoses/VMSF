@@ -28,9 +28,9 @@ const App: React.FC = () => {
         <Route path="/user-dashboard" Component={UserDashboard} />
         <Route element={<ProtectedRoute />}>
           <Route path="/vehicles" Component={VehicleList} />
+          <Route path="/booking/:id" Component={BookingPage} />
         </Route>
         <Route path="/contact" Component={ContactUs} />
-        <Route path="/booking/:id" Component={BookingPage} />
         <Route path="/manage-vehicles" Component={ManageVehicles} />
       </Routes>
     </Router>
