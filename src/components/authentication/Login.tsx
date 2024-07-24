@@ -117,13 +117,14 @@ const Login: React.FC = () => {
             </Link>
           </p>
           <p className="mt-4 text-sm">
-            Are you an admin?{" "}
-            <span
+            Go Back to home:{" "}
+            <Link
+              to="/"
               className="text-blue-500 hover:underline cursor-pointer"
               onClick={handleAdminLogin}
             >
-              Click here to login as admin
-            </span>
+              Home
+            </Link>
           </p>
         </div>
       </div>
