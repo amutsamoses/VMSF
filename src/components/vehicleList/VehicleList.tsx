@@ -20,14 +20,11 @@ import "./vehiclelist.scss";
 
 const VehicleList: React.FC = () => {
   const navigate = useNavigate();
-  // vehiclesApi.endpoints.getVehicles.initiate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [filterManufacturer, setFilterManufacturer] = useState("");
   const [filterYear, setFilterYear] = useState("");
   const [filterColor, setFilterColor] = useState("");
-
-  //i want to fetch data from the api in order to display the vehicles in the vehicle list from vehicleAPI
 
   const {
     data: vehicles,
@@ -47,14 +44,19 @@ const VehicleList: React.FC = () => {
     setFiltersVisible(!filtersVisible);
   };
 
-  const filteredVehicles = vehicles?.filter((vehicle: TVehicle) => {
+  const filteredVehicles = vehicles?.filter((vehicle: TVehicle | undefined) => {
+    if (!vehicle || !vehicle.vehicleSpec) {
+      return false;
+    }
     return (
-      vehicle.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      vehicle.vehicleSpec.manufacturer
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) &&
       (filterManufacturer
-        ? vehicle.manufacturer === filterManufacturer
+        ? vehicle.vehicleSpec.manufacturer === filterManufacturer
         : true) &&
-      (filterYear ? vehicle.year.toString() === filterYear : true) &&
-      (filterColor ? vehicle.color === filterColor : true)
+      (filterYear ? vehicle.vehicleSpec.year === parseInt(filterYear) : true) &&
+      (filterColor ? vehicle.vehicleSpec.color === filterColor : true)
     );
   });
 
@@ -67,8 +69,12 @@ const VehicleList: React.FC = () => {
   if (error) return <div>Error: Error Fetching</div>;
 
   return (
-    <Container style={{ backgroundColor: "#121f2c" }}>
-      <Typography variant="h3" style={{ paddingTop: "30px" }} gutterBottom>
+    <Container style={{ backgroundColor: "#fff" }}>
+      <Typography
+        variant="h3"
+        style={{ paddingTop: "30px", color: "black" }}
+        gutterBottom
+      >
         The best of the best
       </Typography>
       <div className="header-buttons">
@@ -171,45 +177,74 @@ const VehicleList: React.FC = () => {
         </div>
       )}
       <Grid container spacing={4}>
-        {filteredVehicles?.map((vehicle: TVehicle) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle.vehicle_id}>
-            <Card className="vehicle-card">
-              <img
-                src={vehicle.image_url}
-                alt={vehicle.manufacturer}
-                className="vehicle-image"
-              />
-              <div className="vehicle-details">
-                <Typography variant="h6">{vehicle.manufacturer}</Typography>
-                <Typography variant="body1">{vehicle.model}</Typography>
-                <Typography variant="body2">Year: {vehicle.year}</Typography>
-                <Typography variant="body2">
-                  Rate: ${vehicle.rental_rate}/day
-                </Typography>
-                <Typography variant="body2">
-                  Availability:{" "}
-                  {vehicle.availability ? "Available" : "Unavailable"}
-                </Typography>
-                <div className="vehicle-actions">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() =>
-                      handleRentNow(vehicle.vehicleSpec_id.toString())
-                    }
-                  >
-                    Rent Now
-                  </Button>
-                  <Tooltip title={JSON.stringify(vehicle)}>
-                    <Button variant="outlined" color="secondary">
-                      Show Details
+        {filteredVehicles?.map((vehicle: TVehicle) => {
+          if (!vehicle || !vehicle.vehicleSpec) {
+            return null;
+          }
+          return (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle.vehicle_id}>
+              <Card className="vehicle-card">
+                <img
+                  src={vehicle.vehicle_image}
+                  alt={vehicle.vehicleSpec.manufacturer}
+                  className="vehicle-image"
+                />
+                <div className="vehicle-details">
+                  <Typography variant="h6">
+                    {vehicle.vehicleSpec.manufacturer}
+                  </Typography>
+                  <Typography variant="body1">
+                    {vehicle.vehicleSpec.model}
+                  </Typography>
+                  <Typography variant="body2">
+                    Year: {vehicle.vehicleSpec.year}
+                  </Typography>
+                  <Typography variant="body2">
+                    Rate: ${vehicle.rental_rate}/day
+                  </Typography>
+                  <Typography variant="body2">
+                    Availability:{" "}
+                    {vehicle.availability ? "Available" : "Unavailable"}
+                  </Typography>
+                  <div className="vehicle-actions">
+                    <Button
+                      style={{
+                        height: "50px",
+                        width: "60px",
+                        padding: "10px",
+                        marginRight: "15px",
+                        fontFamily: "Poppins",
+                        fontWeight: "bold",
+                      }}
+                      variant="contained"
+                      color="primary"
+                      onClick={() =>
+                        handleRentNow(vehicle.vehicle_id.toString())
+                      }
+                    >
+                      Rent Now
                     </Button>
-                  </Tooltip>
+                    <Tooltip title={JSON.stringify(vehicle)}>
+                      <Button
+                        style={{
+                          height: "50px",
+                          padding: "10px",
+                          marginRight: "15px",
+                          fontFamily: "Poppins",
+                          fontWeight: "bold",
+                        }}
+                        variant="outlined"
+                        color="secondary"
+                      >
+                        Show Details
+                      </Button>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          </Grid>
-        ))}
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
     </Container>
   );

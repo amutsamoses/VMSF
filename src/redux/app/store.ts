@@ -1,7 +1,7 @@
 import { configureStore, combineReducers, Reducer } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authSlice from "../slices/authSlice";
+import authReducer from "../slices/authSlice";
 import { vehiclesApi } from "../vehicleAPI";
 import { usersApi } from "../usersAPI";
 import { locationsApi } from "../locationAPI";
@@ -19,7 +19,7 @@ const persistConfig = {
 
 // root reducer
 const rootReducer: Reducer = combineReducers({
-  auth: authSlice,
+  auth: authReducer,
   [vehiclesApi.reducerPath]: vehiclesApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   [locationsApi.reducerPath]: locationsApi.reducer,

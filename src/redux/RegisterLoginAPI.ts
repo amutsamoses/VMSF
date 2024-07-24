@@ -1,5 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TLogin, TRegister } from "../types";
+import { TLogin, TRegister, TUser } from "../types";
+import { devDomain } from "../utils/constants";
+
+export interface AuthResponse {
+  user: TUser;
+  token: string;
+}
 
 //create booking api slice
 export const registerLoginApi = createApi({
@@ -7,7 +13,7 @@ export const registerLoginApi = createApi({
   reducerPath: "registerLoginApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api/auth" }),
+  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
 
   //tag types
   tagTypes: ["RegisterLogin"],
@@ -15,9 +21,9 @@ export const registerLoginApi = createApi({
   //create build in endpoints
   endpoints: (builder) => ({
     //register
-    register: builder.mutation<TRegister, TRegister>({
+    register: builder.mutation<AuthResponse, TRegister>({
       query: (newUser) => ({
-        url: "/register",
+        url: "/auth/register",
         method: "POST",
         body: newUser,
         providesTags: ["RegisterLogin"],
@@ -28,9 +34,9 @@ export const registerLoginApi = createApi({
     }),
 
     //login
-    login: builder.mutation<TLogin, TLogin>({
+    login: builder.mutation<AuthResponse, TLogin>({
       query: (user) => ({
-        url: "/login",
+        url: "/auth/login",
         method: "POST",
         body: user,
         providesTags: ["RegisterLogin"],

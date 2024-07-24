@@ -1,16 +1,18 @@
-// Login.tsx
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { registerLoginApi } from "../../redux/RegisterLoginAPI";
 import { TLogin } from "../../types";
 import { getErrorMessage } from "../../utils/errorUtils";
+import { login as loginAction } from "../../redux/slices/authSlice"; // Import the login action
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [login, { isLoading, isError, error }] = registerLoginApi.useLoginMutation();
+  const [login, { isLoading, isError, error }] =
+    registerLoginApi.useLoginMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Initialize the useDispatch hook
 
   const handleAdminLogin = () => {
     // Handle admin login logic
@@ -25,7 +27,8 @@ const Login: React.FC = () => {
     };
 
     try {
-      await login(user).unwrap();
+      const response = await login(user).unwrap();
+      dispatch(loginAction({ user: response.user, token: response.token })); // Dispatch the login action with the response data
       navigate("/user-dashboard");
     } catch (err) {
       console.error("Failed to login: ", err);
@@ -38,7 +41,10 @@ const Login: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email address
             </label>
             <input
@@ -52,7 +58,10 @@ const Login: React.FC = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -71,11 +80,18 @@ const Login: React.FC = () => {
               id="remember"
               className="form-checkbox h-4 w-4 text-blue-600"
             />
-            <label htmlFor="remember" className="ml-2 block text-sm text-gray-900">
+            <label
+              htmlFor="remember"
+              className="ml-2 block text-sm text-gray-900"
+            >
               Remember me
             </label>
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600" disabled={isLoading}>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            disabled={isLoading}
+          >
             {isLoading ? "Logging in..." : "Submit"}
           </button>
         </form>
@@ -93,13 +109,19 @@ const Login: React.FC = () => {
           </p>
           <p className="mt-2 text-sm">
             Forgot your password?{" "}
-            <Link to="/forgot-password" className="text-blue-500 hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-blue-500 hover:underline"
+            >
               Reset here
             </Link>
           </p>
           <p className="mt-4 text-sm">
             Are you an admin?{" "}
-            <span className="text-blue-500 hover:underline cursor-pointer" onClick={handleAdminLogin}>
+            <span
+              className="text-blue-500 hover:underline cursor-pointer"
+              onClick={handleAdminLogin}
+            >
               Click here to login as admin
             </span>
           </p>

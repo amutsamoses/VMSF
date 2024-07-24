@@ -10,7 +10,7 @@ import Dashboard from "./components/admin/dashboard/DashboardOverview";
 import UserDashboard from "./components/customer/Dashboard/UserDashboard";
 import VehicleList from "./components/vehicleList/VehicleList";
 import ContactUs from "./pages/ContactUs";
-import BookingForm from "./components/bookings/BookingForm";
+import BookingPage from "./components/bookings/BookingPage";
 import ManageVehicles from "./components/admin/dashboard/ManageVehicles";
 
 const App: React.FC = () => {
@@ -27,7 +27,7 @@ const App: React.FC = () => {
         <Route path="/user-dashboard" Component={UserDashboard} />
         <Route path="/vehicles" Component={VehicleList} />
         <Route path="/contact" Component={ContactUs} />
-        <Route path="/booking/:id" Component={BookingForm} />
+        <Route path="/booking/:id" Component={BookingPage} />
         <Route path="/manage-vehicles" Component={ManageVehicles} />
       </Routes>
     </Router>

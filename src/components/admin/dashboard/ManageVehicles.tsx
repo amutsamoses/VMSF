@@ -1,398 +1,540 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Typography,
-  Paper,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
+  Card,
+  CardContent,
   TextField,
-  IconButton,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { vehiclesApi } from "../../../redux/vehicleAPI";
 import { TVehicle } from "../../../types";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CarCard from "../../vehicleList/Card";
 import { cloudinaryConfig } from "../../../cloudinary/cloudinary.config";
-import axios from "axios";
 
 interface FormDataState {
+  rental_rate: number;
+  availability: boolean;
+  vehicle_image: File | null;
   manufacturer: string;
   model: string;
-  year: string; // Changed to string for input handling
+  year: number;
   fuel_type: string;
-  transmission: string;
-  rental_rate: string; // Changed to string for input handling
-  availability: boolean;
   engine_capacity: string;
-  seating_capacity: string; // Changed to string for input handling
+  transmission: string;
+  seating_capacity: number;
   color: string;
   features: string;
-  image_url: string;
+  vehicle_id?: number;
 }
 
-const initialFormData: FormDataState = {
-  manufacturer: "",
-  model: "",
-  year: "",
-  fuel_type: "",
-  transmission: "",
-  rental_rate: "",
-  availability: true,
-  engine_capacity: "",
-  seating_capacity: "",
-  color: "",
-  features: "",
-  image_url: "",
-};
-
-const ManageVehicles = () => {
-  const { data: vehicles, refetch } = vehiclesApi.useGetVehiclesQuery();
-  const [createVehicle] = vehiclesApi.useCreateVehicleMutation();
-  const [updateVehicle] = vehiclesApi.useUpdateVehicleMutation();
+const ManageVehicles: React.FC = () => {
+  const { data: vehicles = [], refetch } = vehiclesApi.useGetVehiclesQuery();
+  const [addVehicle] = vehiclesApi.useCreateVehicleMutation();
   const [deleteVehicle] = vehiclesApi.useDeleteVehicleMutation();
+  const [updateVehicle] = vehiclesApi.useUpdateVehicleMutation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [open, setOpen] = useState(false);
-  const [vehicleData, setVehicleData] = useState<Partial<TVehicle>>({});
-  const [isEditing, setIsEditing] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState<FormDataState>(initialFormData);
+  const [formData, setFormData] = useState<FormDataState>({
+    rental_rate: 0,
+    availability: true,
+    vehicle_image: null,
+    manufacturer: "",
+    model: "",
+    year: 0,
+    fuel_type: "",
+    engine_capacity: "",
+    transmission: "",
+    seating_capacity: 0,
+    color: "",
+    features: "",
+    vehicle_id: undefined,
+  });
 
-  useEffect(() => {
-    if (isEditing && vehicleData) {
-      setFormData({
-        manufacturer: vehicleData.manufacturer || "",
-        model: vehicleData.model || "",
-        year: vehicleData.year ? vehicleData.year.toString() : "",
-        fuel_type: vehicleData.fuel_type || "",
-        transmission: vehicleData.transmission || "",
-        rental_rate: vehicleData.rental_rate
-          ? vehicleData.rental_rate.toString()
-          : "",
-        availability: vehicleData.availability ?? true,
-        engine_capacity: vehicleData.engine_capacity || "",
-        seating_capacity: vehicleData.seating_capacity
-          ? vehicleData.seating_capacity.toString()
-          : "",
-        color: vehicleData.color || "",
-        features: Array.isArray(vehicleData.features)
-          ? vehicleData.features.join(", ")
-          : vehicleData.features || "",
-        image_url: vehicleData.image_url || "",
-      });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked, files } = e.target;
+
+    if (type === "checkbox") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: checked,
+      }));
+    } else if (type === "file") {
+      setFormData((prevData) => ({
+        ...prevData,
+        vehicle_image: files ? files[0] : null,
+      }));
     } else {
-      setFormData(initialFormData);
-    }
-  }, [isEditing, vehicleData]);
-
-  const handleClickOpen = () => {
-    setIsEditing(false);
-    setVehicleData({});
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked, files } = e.target as HTMLInputElement;
-    if (type === "file" && files) {
-      setImageFile(files[0]);
-    } else if (type === "checkbox") {
-      setFormData((prevData) => ({ ...prevData, [name]: checked }));
-    } else {
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(e);
 
-    // Validate form data
-    const requiredFields = [
-      "manufacturer",
-      "model",
-      "year",
-      "fuel_type",
-      "transmission",
-      "engine_capacity",
-      "seating_capacity",
-      "color",
-      "features",
-    ];
-    for (const field of requiredFields) {
-      if (!formData[field as keyof FormDataState]) {
-        alert(`${field} is required`);
-        return;
-      }
-    }
+    try {
+      let imageUrl = "";
+      if (formData.vehicle_image) {
+        const formDataImage = new FormData();
+        formDataImage.append("file", formData.vehicle_image);
+        formDataImage.append("upload_preset", cloudinaryConfig.uploadPreset);
 
-    let imageUrl = formData.image_url;
-
-    // Upload image to Cloudinary if a new image file is selected
-    if (imageFile) {
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", imageFile);
-      uploadFormData.append("upload_preset", cloudinaryConfig.uploadPreset);
-
-      try {
         const response = await axios.post(
           `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
-          uploadFormData
+          formDataImage
         );
-        imageUrl = response.data.secure_url;
-      } catch (error) {
-        console.error("Error uploading image to Cloudinary:", error);
-        return;
+
+        if (response.status === 200) {
+          imageUrl = response.data.secure_url;
+        } else {
+          console.error("Failed to upload image:", response.statusText);
+          toast.error("Failed to upload image");
+          return;
+        }
+      }
+
+      const vehicleData = {
+        vehicle: {
+          rental_rate: formData.rental_rate,
+          availability: formData.availability,
+          vehicle_image: imageUrl,
+        },
+        vehicleSpec: {
+          manufacturer: formData.manufacturer,
+          model: formData.model,
+          year: formData.year,
+          fuel_type: formData.fuel_type,
+          engine_capacity: formData.engine_capacity,
+          transmission: formData.transmission,
+          seating_capacity: formData.seating_capacity,
+          color: formData.color,
+          features: formData.features,
+        },
+      };
+
+      await addVehicle(vehicleData).unwrap();
+      refetch();
+      toast.success("Vehicle added successfully");
+      clearForm();
+    } catch (error: any) {
+      console.error("Error:", error.message);
+      toast.error(error.message);
+    }
+  };
+
+  const clearForm = () => {
+    setFormData({
+      rental_rate: 0,
+      availability: true,
+      vehicle_image: null,
+      manufacturer: "",
+      model: "",
+      year: 0,
+      fuel_type: "",
+      engine_capacity: "",
+      transmission: "",
+      seating_capacity: 0,
+      color: "",
+      features: "",
+      vehicle_id: undefined,
+    });
+  };
+
+  const handleDeleteVehicle = async (id: number) => {
+    try {
+      await deleteVehicle(id).unwrap();
+      refetch();
+      toast.success("Vehicle deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete vehicle:", error);
+      toast.error("Failed to delete vehicle");
+    }
+  };
+
+  const handleUpdateVehicle = async (id: number) => {
+    const vehicleToUpdate = vehicles.find(
+      (vehicle: { vehicle_id: number }) => vehicle.vehicle_id === id
+    );
+
+    if (vehicleToUpdate) {
+      try {
+        let imageUrl = vehicleToUpdate.vehicle_image;
+
+        if (formData.vehicle_image) {
+          const formDataImage = new FormData();
+          formDataImage.append("file", formData.vehicle_image);
+          formDataImage.append("upload_preset", cloudinaryConfig.uploadPreset);
+
+          const response = await axios.post(
+            `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
+            formDataImage
+          );
+
+          if (response.status === 200) {
+            imageUrl = response.data.secure_url;
+          } else {
+            console.error("Failed to upload image:", response.statusText);
+            toast.error("Failed to upload image");
+            return;
+          }
+        }
+
+        const updatedVehicleData = {
+          vehicleSpec: {
+            manufacturer:
+              formData.manufacturer || vehicleToUpdate.vehicleSpec.manufacturer,
+            model: formData.model || vehicleToUpdate.vehicleSpec.model,
+            year: formData.year || vehicleToUpdate.vehicleSpec.year,
+            fuel_type:
+              formData.fuel_type || vehicleToUpdate.vehicleSpec.fuel_type,
+            engine_capacity:
+              formData.engine_capacity ||
+              vehicleToUpdate.vehicleSpec.engine_capacity,
+            transmission:
+              formData.transmission || vehicleToUpdate.vehicleSpec.transmission,
+            seating_capacity:
+              formData.seating_capacity ||
+              vehicleToUpdate.vehicleSpec.seating_capacity,
+            color: formData.color || vehicleToUpdate.vehicleSpec.color,
+            features: formData.features || vehicleToUpdate.vehicleSpec.features,
+          },
+          vehicle: {
+            rental_rate: formData.rental_rate || vehicleToUpdate.rental_rate,
+            availability: formData.availability,
+            vehicle_image: imageUrl,
+          },
+          vehicle_id: vehicleToUpdate.vehicle_id,
+          vehicle_image: imageUrl,
+          rental_rate: formData.rental_rate || vehicleToUpdate.rental_rate,
+          availability: formData.availability,
+        };
+
+        await updateVehicle({ id, updated: updatedVehicleData }).unwrap();
+        refetch();
+        toast.success("Vehicle updated successfully");
+        setIsModalOpen(false);
+      } catch (error: any) {
+        console.error("Error:", error.message);
+        toast.error("Failed to update vehicle");
       }
     }
-
-    const vehicleDataWithImage: TVehicle = {
-      ...formData,
-      year: parseInt(formData.year, 10), // Convert to number
-      rental_rate: parseFloat(formData.rental_rate), // Convert to number
-      seating_capacity: parseInt(formData.seating_capacity, 10), // Convert to number
-      features: formData.features.split(",").map((feature) => feature.trim()), // Convert to array
-      image_url: imageUrl,
-    } as unknown as TVehicle;
-
-    if (isEditing && vehicleData.vehicle_id) {
-      await updateVehicle({
-        id: vehicleData.vehicle_id,
-        updated: vehicleDataWithImage,
-      });
-    } else {
-      await createVehicle(vehicleDataWithImage).unwrap();
-    }
-
-    refetch();
-    handleClose();
   };
 
-  const handleEdit = (vehicle: TVehicle) => {
-    setVehicleData(vehicle);
-    setIsEditing(true);
-    setOpen(true);
+  const handleOpenModal = (car: TVehicle) => {
+    setFormData({
+      rental_rate: car.rental_rate || 0,
+      availability: car.availability,
+      vehicle_image: null,
+      manufacturer: car.vehicleSpec.manufacturer,
+      model: car.vehicleSpec.model,
+      year: car.vehicleSpec.year || 0,
+      fuel_type: car.vehicleSpec.fuel_type,
+      engine_capacity: car.vehicleSpec.engine_capacity,
+      transmission: car.vehicleSpec.transmission,
+      seating_capacity: car.vehicleSpec.seating_capacity || 0,
+      color: car.vehicleSpec.color,
+      features: car.vehicleSpec.features,
+      vehicle_id: car.vehicle_id,
+    });
+    setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    await deleteVehicle(id);
-    refetch();
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    clearForm();
   };
 
   return (
-    <Grid container spacing={5}>
-      <Grid item xs={11} sx={{ mx: -17 }}>
-        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-          <Typography
-            variant="h5"
-            style={{
-              padding: "2rem",
-              width: "100%",
-              textAlign: "center",
-              textDecoration: "bold",
-              marginLeft: "20px",
-              marginRight: "auto",
-            }}
+    <div className="p-4">
+      <Typography variant="h4" gutterBottom>
+        Manage Vehicles
+      </Typography>
+      <Card className="mb-4">
+        <CardContent>
+          <Typography variant="h6">Add New Vehicle</Typography>
+          <form
+            className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4"
+            onSubmit={handleSubmit}
           >
-            Manage Vehicles
-          </Typography>
-          <Button variant="contained" color="primary" onClick={handleClickOpen}>
-            Add Vehicle
-          </Button>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} sx={{ mx: -20 }}>
-        <Paper
-          sx={{
-            paddingLeft: "23px",
-            display: "flex",
-            flexDirection: "column",
-            marginRight: "auto",
-          }}
-        >
-          <Typography variant="h5">Vehicle List</Typography>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Manufacturer</TableCell>
-                <TableCell>Model</TableCell>
-                <TableCell>Year</TableCell>
-                <TableCell>Fuel Type</TableCell>
-                <TableCell>Engine Capacity</TableCell>
-                <TableCell>Transmission</TableCell>
-                <TableCell>Seating Capacity</TableCell>
-                <TableCell>Color</TableCell>
-                <TableCell>Features</TableCell>
-                <TableCell>Image</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {vehicles?.map((vehicle) => (
-                <TableRow key={vehicle.vehicle_id}>
-                  <TableCell>{vehicle.manufacturer}</TableCell>
-                  <TableCell>{vehicle.model}</TableCell>
-                  <TableCell>{vehicle.year}</TableCell>
-                  <TableCell>{vehicle.fuel_type}</TableCell>
-                  <TableCell>{vehicle.engine_capacity}</TableCell>
-                  <TableCell>{vehicle.transmission}</TableCell>
-                  <TableCell>{vehicle.seating_capacity}</TableCell>
-                  <TableCell>{vehicle.color}</TableCell>
-                  <TableCell>{vehicle.features?.join(", ")}</TableCell>
-                  <TableCell>
-                    <img
-                      src={vehicle.image_url}
-                      alt={vehicle.manufacturer}
-                      style={{ width: 50, height: 50 }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEdit(vehicle)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => handleDelete(vehicle.vehicle_id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </Grid>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{isEditing ? "Edit Vehicle" : "Add Vehicle"}</DialogTitle>
+            <TextField
+              label="Manufacturer"
+              variant="outlined"
+              fullWidth
+              name="manufacturer"
+              value={formData.manufacturer}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Model"
+              variant="outlined"
+              fullWidth
+              name="model"
+              value={formData.model}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Year"
+              variant="outlined"
+              fullWidth
+              type="number"
+              name="year"
+              value={formData.year}
+              onChange={(e) =>
+                setFormData({ ...formData, year: parseInt(e.target.value) })
+              }
+            />
+            <TextField
+              label="Fuel Type"
+              variant="outlined"
+              fullWidth
+              name="fuel_type"
+              value={formData.fuel_type}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Engine Capacity"
+              variant="outlined"
+              fullWidth
+              name="engine_capacity"
+              value={formData.engine_capacity}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Transmission"
+              variant="outlined"
+              fullWidth
+              name="transmission"
+              value={formData.transmission}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Seating Capacity"
+              variant="outlined"
+              fullWidth
+              type="number"
+              name="seating_capacity"
+              value={formData.seating_capacity}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  seating_capacity: parseInt(e.target.value),
+                })
+              }
+            />
+            <TextField
+              label="Color"
+              variant="outlined"
+              fullWidth
+              name="color"
+              value={formData.color}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Features"
+              variant="outlined"
+              fullWidth
+              name="features"
+              value={formData.features}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Rental Rate"
+              variant="outlined"
+              fullWidth
+              type="number"
+              name="rental_rate"
+              value={formData.rental_rate}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  rental_rate: parseFloat(e.target.value),
+                })
+              }
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.availability}
+                  onChange={handleChange}
+                  name="availability"
+                />
+              }
+              label="Available"
+            />
+            <div className="sm:col-span-2">
+              <input
+                type="file"
+                accept="image/*"
+                name="vehicle_image"
+                onChange={handleChange}
+                style={{ marginTop: "16px", marginBottom: "8px" }}
+              />
+            </div>
+            <Button variant="contained" color="primary" type="submit">
+              Add Vehicle
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {vehicles.map((car: TVehicle) => (
+          <CarCard
+            key={car.vehicle_id}
+            vehicle_id={car.vehicle_id}
+            vehicle_image={car.vehicle_image}
+            rental_rate={car.rental_rate}
+            availability={car.availability}
+            vehicleSpec={car.vehicleSpec}
+            onDelete={() => handleDeleteVehicle(car.vehicle_id)}
+            onUpdate={() => handleOpenModal(car)}
+          />
+        ))}
+      </div>
+
+      <Dialog open={isModalOpen} onClose={handleCloseModal}>
+        <DialogTitle>Update Vehicle</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Fill in the vehicle details below.
-          </DialogContentText>
-          <TextField
-            margin="dense"
-            name="manufacturer"
-            label="Manufacturer"
-            fullWidth
-            value={formData.manufacturer}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="model"
-            label="Model"
-            fullWidth
-            value={formData.model}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="year"
-            label="Year"
-            fullWidth
-            type="number"
-            value={formData.year}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="fuel_type"
-            label="Fuel Type"
-            fullWidth
-            value={formData.fuel_type}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="transmission"
-            label="Transmission"
-            fullWidth
-            value={formData.transmission}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="rental_rate"
-            label="Rental Rate"
-            fullWidth
-            type="number"
-            value={formData.rental_rate}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="availability"
-            label="Availability"
-            fullWidth
-            value={formData.availability}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="engine_capacity"
-            label="Engine Capacity"
-            fullWidth
-            value={formData.engine_capacity}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="seating_capacity"
-            label="Seating Capacity"
-            fullWidth
-            type="number"
-            value={formData.seating_capacity}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="color"
-            label="Color"
-            fullWidth
-            value={formData.color}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="features"
-            label="Features"
-            fullWidth
-            value={formData.features}
-            onChange={handleChange}
-          />
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleChange}
-            style={{ marginTop: "10px", marginBottom: "6px" }}
-          />
+          <form className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TextField
+              label="Manufacturer"
+              variant="outlined"
+              fullWidth
+              name="manufacturer"
+              value={formData.manufacturer}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Model"
+              variant="outlined"
+              fullWidth
+              name="model"
+              value={formData.model}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Year"
+              variant="outlined"
+              fullWidth
+              type="number"
+              name="year"
+              value={formData.year}
+              onChange={(e) =>
+                setFormData({ ...formData, year: parseInt(e.target.value) })
+              }
+            />
+            <TextField
+              label="Fuel Type"
+              variant="outlined"
+              fullWidth
+              name="fuel_type"
+              value={formData.fuel_type}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Engine Capacity"
+              variant="outlined"
+              fullWidth
+              name="engine_capacity"
+              value={formData.engine_capacity}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Transmission"
+              variant="outlined"
+              fullWidth
+              name="transmission"
+              value={formData.transmission}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Seating Capacity"
+              variant="outlined"
+              fullWidth
+              type="number"
+              name="seating_capacity"
+              value={formData.seating_capacity}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  seating_capacity: parseInt(e.target.value),
+                })
+              }
+            />
+            <TextField
+              label="Color"
+              variant="outlined"
+              fullWidth
+              name="color"
+              value={formData.color}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Features"
+              variant="outlined"
+              fullWidth
+              name="features"
+              value={formData.features}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Rental Rate"
+              variant="outlined"
+              fullWidth
+              type="number"
+              name="rental_rate"
+              value={formData.rental_rate}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  rental_rate: parseFloat(e.target.value),
+                })
+              }
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.availability}
+                  onChange={handleChange}
+                  name="availability"
+                />
+              }
+              label="Available"
+            />
+            <Button variant="contained" component="label">
+              Upload Vehicle Image
+              <input
+                type="file"
+                hidden
+                name="vehicle_image"
+                onChange={handleChange}
+              />
+            </Button>
+          </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="secondary">
+          <Button onClick={handleCloseModal} color="secondary">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary">
-            {isEditing ? "Update" : "Add"}
+          <Button
+            onClick={() => handleUpdateVehicle(formData.vehicle_id!)}
+            color="primary"
+          >
+            Update Vehicle
           </Button>
         </DialogActions>
       </Dialog>
-    </Grid>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TVehicle } from "../types";
+import { devDomain } from "../utils/constants";
 
 //create vehicle api slice
 export const vehiclesApi = createApi({
@@ -7,7 +8,7 @@ export const vehiclesApi = createApi({
   reducerPath: "vehiclesApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
 
   //tag types
   tagTypes: ["Vehicle"],
@@ -15,7 +16,7 @@ export const vehiclesApi = createApi({
   //create build in endpoints
   endpoints: (builder) => ({
     //get vehicles
-    getVehicles: builder.query<TVehicle[], void>({
+    getVehicles: builder.query<TVehicle[], number | void>({
       query: () => "/vehiclespecs-with-vehicles",
 
       //provide vehicle tag to be used in the cache

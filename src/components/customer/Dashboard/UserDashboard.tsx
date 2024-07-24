@@ -16,8 +16,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import HomeIcon from "@mui/icons-material/Home";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -26,6 +24,21 @@ import InputBase from "@mui/material/InputBase";
 import { alpha } from "@mui/material/styles";
 import ListItemText from "@mui/material/ListItemText/ListItemText";
 import AccountSettings from "./AccountSettings";
+import BookingHistory from "../../bookings/BookingHistroy";
+import BrowseVehicle from "../../bookings/BrowseVehicle";
+import CurrentBooking from "../../bookings/CurrentBooking";
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import BookingPage from "../../bookings/BookingPage";
+import { InboxIcon, MailIcon } from "lucide-react";
 
 const drawerWidth = 240;
 
@@ -138,6 +151,28 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const data = [
+  { name: "Jan", rentals: 30 },
+  { name: "Feb", rentals: 20 },
+  { name: "Mar", rentals: 50 },
+  { name: "Apr", rentals: 40 },
+  { name: "May", rentals: 70 },
+  { name: "Jun", rentals: 60 },
+  { name: "Jul", rentals: 90 },
+  { name: "Aug", rentals: 100 },
+  { name: "Sep", rentals: 80 },
+  { name: "Oct", rentals: 60 },
+  { name: "Nov", rentals: 50 },
+  { name: "Dec", rentals: 70 },
+];
+
+const analyticsData = {
+  totalTimeSpent: "350 hours",
+  averageRentals: "45 rentals",
+  annualRentals: "540 rentals",
+  monthlyRentals: "45 rentals",
+};
+
 export default function UserDashboard() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -170,19 +205,90 @@ export default function UserDashboard() {
     switch (view) {
       case "Overview":
         return (
-          <Typography variant="body1">
-            Welcome to your dashboard! Here you can find a summary of your
-            activities, latest bookings, and more.
-          </Typography>
+          <>
+            <Typography variant="h6" gutterBottom>
+              Analytics Overview
+            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box sx={{ flex: 1 }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="rentals"
+                      stroke="#8884d8"
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Box>
+            </Box>
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="h6" gutterBottom>
+                Key Metrics
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                <Box sx={{ flex: 1, p: 2 }}>
+                  <Typography variant="subtitle1">Total Time Spent:</Typography>
+                  <Typography variant="body1">
+                    {analyticsData.totalTimeSpent}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: 2 }}>
+                  <Typography variant="subtitle1">Average Rentals:</Typography>
+                  <Typography variant="body1">
+                    {analyticsData.averageRentals}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: 2 }}>
+                  <Typography variant="subtitle1">Annual Rentals:</Typography>
+                  <Typography variant="body1">
+                    {analyticsData.annualRentals}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: 2 }}>
+                  <Typography variant="subtitle1">Monthly Rentals:</Typography>
+                  <Typography variant="body1">
+                    {analyticsData.monthlyRentals}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </>
         );
       case "Browse Vehicle":
-        return <Typography variant="body1">Browse Vehicle Content</Typography>;
+        return (
+          <>
+            <Typography variant="body1">Browse Vehicle Content</Typography>
+            <BrowseVehicle />
+          </>
+        );
       case "Booking Form":
-        return <Typography variant="body1">Booking Form Content</Typography>;
+        return (
+          <>
+            <Typography variant="body1">Booking Form Content</Typography>
+            <BookingPage />
+          </>
+        );
       case "Current Booking":
-        return <Typography variant="body1">Current Booking Content</Typography>;
+        return (
+          <>
+            <Typography variant="body1">Current Booking Content</Typography>
+            <CurrentBooking />
+          </>
+        );
       case "Booking History":
-        return <Typography variant="body1">Booking History Content</Typography>;
+        return (
+          <>
+            <Typography variant="body1">Booking History Content</Typography>
+            <BookingHistory />
+          </>
+        );
       case "New Tickets":
         return <Typography variant="body1">New Tickets Content</Typography>;
       case "My Tickets":
@@ -241,7 +347,7 @@ export default function UserDashboard() {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={true}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -259,23 +365,20 @@ export default function UserDashboard() {
                 onClick={() => setView(item.view)}
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
+                  justifyContent: "initial",
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : "auto",
+                    mr: 3,
                     justifyContent: "center",
                   }}
                 >
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
+                <ListItemText primary={item.text} sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
           ))}

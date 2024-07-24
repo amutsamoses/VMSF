@@ -1,5 +1,4 @@
 export interface TVehicleSpecs {
-  vehicleSpec_id: number;
   manufacturer: string;
   model: string;
   year: number;
@@ -8,36 +7,15 @@ export interface TVehicleSpecs {
   transmission: string;
   seating_capacity: number;
   color: string;
-  features: string[];
-  image_url: string;
+  features: string;
 }
 
 export interface TVehicle {
   vehicle_id: number;
-  vehicleSpec_id: number;
+  vehicle_image: string;
   rental_rate: number;
   availability: boolean;
-  manufacturer: string;
-  model: string;
-  year: number;
-  fuel_type: string;
-  engine_capacity: string;
-  transmission: string;
-  seating_capacity: number;
-  color: string;
-  features: string[];
-  image_url: string;
-}
-
-export interface TBooking {
-  booking_date: string;
-  return_date: string;
-  total_amount: number;
-  vehicle_id: number;
-  user_id: number;
-  booking_id: number;
-  location_id: number;
-  booking_status: [string, string];
+  vehicleSpec: TVehicleSpecs;
 }
 
 export interface TUser {
@@ -77,7 +55,12 @@ export interface TBooking {
   booking_date: string;
   return_date: string;
   total_amount: number;
-  booking_status: [string, string];
+  booking_status: "Completed" | "Pending" | "Cancelled";
+  created_at: string;
+  updated_at: string;
+  vehicle: TVehicle;
+  location: TLocation;
+  payments: TPayment;
 }
 
 export interface TLogin {
@@ -104,12 +87,13 @@ export interface TCustomerSupport {
 }
 
 export interface TPayment {
+  payment_id: number;
   booking_id: number;
-  total_amount: number;
-  payment_status: string;
+  amount: number;
   payment_date: string;
   payment_method: string;
   transaction_id: string;
+  payment_status: "Completed" | "Pending" | "Refunded";
   created_at: string;
   updated_at: string;
   url: string;

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TBooking } from "../types";
+import { devDomain } from "../utils/constants";
 
 //create booking api slice
 
@@ -8,7 +9,7 @@ export const bookingsApi = createApi({
   reducerPath: "bookingsApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
 
   //tag types
   tagTypes: ["Booking"],
@@ -49,12 +50,12 @@ export const bookingsApi = createApi({
     //update booking
     updateBooking: builder.mutation<
       TBooking,
-      { id: number; updated: TBooking }
+      { id: number; booking_status: string }
     >({
-      query: ({ id, ...updated }) => ({
-        url: `/bookings/${id}`,
+      query: ({ id, booking_status }) => ({
+        url: `/bookings/${id}/booking_status`,
         method: "PUT",
-        body: updated,
+        body: { booking_status },
         providesTags: [{ type: "Booking", id: "LIST" }],
       }),
 

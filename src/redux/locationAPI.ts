@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { TLocation } from "../types";
+import { devDomain } from "../utils/constants";
 
 //create location api slice
 export const locationsApi = createApi({
@@ -7,7 +8,7 @@ export const locationsApi = createApi({
   reducerPath: "locationApi",
 
   //define base query endpoint to be used by the api
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: devDomain }),
 
   //tag types
   tagTypes: ["Location"],

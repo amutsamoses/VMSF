@@ -1,128 +1,193 @@
-// BookingForm.tsx
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/app/store";
+import { TVehicle, TLocation } from "../../types";
+import { bookingsApi } from "../../redux/bookingAPI";
 import { locationsApi } from "../../redux/locationAPI";
 import { paymentsApi } from "../../redux/paymentAPI";
-import { bookingsApi } from "../../redux/bookingAPI";
+import { ClipLoader } from "react-spinners";
+import dayjs from "dayjs";
+import { toast } from "react-toastify";
+import { loadStripe } from "@stripe/stripe-js";
 
-const BookingForm: React.FC = () => {
+const stripePromise = loadStripe(
+  "pk_test_51Pf07RF7Q4rxDfq4EGqptzX11otnnCrpgzWvpm0YJxQAWbuLW8a60YaVn16SVfFwT4luRHbNBp6qwwQYkEOe2MYi006R1GGwy5"
+);
+
+interface BookingFormProps {
+  vehicle: TVehicle;
+}
+
+const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [locationId, setLocationId] = useState<number | undefined>(undefined);
+
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const { data: locations } = locationsApi.useGetLocationsQuery();
+  const [addBooking, { isLoading: isLoadingBooking }] =
+    bookingsApi.useCreateBookingMutation();
   const [createPayment] = paymentsApi.useCreatePaymentMutation();
-  const [createBooking] = bookingsApi.useCreateBookingMutation();
+  const [updateStatus] = bookingsApi.useCreateBookingMutation();
+  const [isPaymentLoading, setIsPaymentLoading] = useState<number | null>(null);
 
-  const [vehicleName, setVehicleName] = useState("");
-  const [bookingDate, setBookingDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [branches, setBranches] = useState("");
+  const handleBooking = async () => {
+    if (!startDate || !endDate || !locationId || !user || !vehicle) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    const rentalDays = end.diff(start, "day");
+
+    if (rentalDays <= 0) {
+      toast.error("End date must be after start date");
+      return;
+    }
+
+    const totalAmount = rentalDays * vehicle.rental_rate;
 
     const bookingData = {
-      vehicle_id: 1, // Replace with actual vehicle id
-      user_id: 1, // Replace with actual user id
-      booking_date: bookingDate,
-      return_date: returnDate,
-      total_amount: 100, // Replace with actual amount
-      location_id: parseInt(location),
-      booking_status: ["pending", "payment"] as [string, string], // Convert to tuple
+      user_id: user.user_id,
+      vehicle_id: vehicle.vehicle_id,
+      location_id: locationId,
+      booking_date: startDate,
+      return_date: endDate,
+      total_amount: totalAmount,
     };
 
-    const bookingResponse = await createBooking(bookingData).unwrap();
+    console.log("Booking Data:", bookingData);
 
-    if (bookingResponse) {
-      const paymentData = {
-        booking_id: bookingResponse.booking_id,
-        total_amount: bookingResponse.total_amount,
-        payment_status: "pending",
-        payment_date: new Date().toISOString(),
-        payment_method: "card", // Replace with actual method
-        transaction_id: "txn_1234567890", // Replace with actual transaction id
-      };
+    try {
+      const newBooking = await addBooking(bookingData).unwrap();
+      toast.success("Booking created successfully");
 
-      await createPayment(paymentData);
+      // Initiate payment
+      handleMakePayment(newBooking.booking_id, totalAmount);
+    } catch (error: any) {
+      console.error("Error creating booking:", error);
+      const errorMessage = error.data?.error || "Error creating booking";
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleMakePayment = async (bookingId: number, amount: number) => {
+    setIsPaymentLoading(bookingId);
+    try {
+      const res = await createPayment({
+        booking_id: bookingId,
+        amount: amount,
+      }).unwrap();
+      toast.success("Payment initiated successfully");
+      console.log("Payment response:", res);
+      if (res.url) {
+        window.location.href = res.url; // Redirect to the Stripe checkout URL
+      } else {
+        const stripe = await stripePromise;
+        if (stripe && res.transaction_id) {
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: res.transaction_id,
+          });
+          if (error) {
+            console.error("Error redirecting to checkout:", error);
+            toast.error("Error redirecting to checkout");
+          } else {
+            //update booking status
+            await updateStatus({
+              booking_id: bookingId,
+              booking_status: "Completed",
+            }).unwrap();
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      toast.error("Error initiating payment");
+
+      await updateStatus({
+        booking_id: bookingId,
+        booking_status: "Cancelled",
+      }).unwrap();
+    } finally {
+      setIsPaymentLoading(null);
     }
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ mt: 3 }}
-      className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md"
-    >
-      <FormControl fullWidth margin="normal">
-        <TextField
-          label="Vehicle Name"
-          variant="outlined"
-          value={vehicleName}
-          onChange={(e) => setVehicleName(e.target.value)}
-        />
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <TextField
-          label="Booking Date"
+    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Book Vehicle</h2>
+      <div className="mb-4">
+        <label className="block text-gray-500 text-sm font-bold mb-2">
+          Start Date
+        </label>
+        <input
           type="date"
-          variant="outlined"
-          InputLabelProps={{ shrink: true }}
-          value={bookingDate}
-          onChange={(e) => setBookingDate(e.target.value)}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         />
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <TextField
-          label="Return Date"
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          End Date
+        </label>
+        <input
           type="date"
-          variant="outlined"
-          InputLabelProps={{ shrink: true }}
-          value={returnDate}
-          onChange={(e) => setReturnDate(e.target.value)}
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         />
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <InputLabel id="location-label">Location</InputLabel>
-        <Select
-          labelId="location-label"
-          value={location}
-          onChange={(e) => setLocation(e.target.value as string)}
-          variant="outlined"
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Location
+        </label>
+        <select
+          value={locationId}
+          onChange={(e) => setLocationId(Number(e.target.value))}
+          className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         >
-          {locations?.map((loc) => (
-            <MenuItem
-              key={loc.location_id as React.Key}
-              value={loc.location_id}
-            >
-              {loc.name}
-            </MenuItem>
+          <option value="">Select a location</option>
+          {locations?.map((location: TLocation) => (
+            <option key={location.location_id} value={location.location_id}>
+              {location.name}
+            </option>
           ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <TextField
-          label="Branches"
-          variant="outlined"
-          value={branches}
-          onChange={(e) => setBranches(e.target.value)}
-        />
-      </FormControl>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        className="w-full mt-4"
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Vehicle Name
+        </label>
+        <div className="block w-full p-3 rounded-md border-gray-300 shadow-sm bg-gray-100">
+          {vehicle.vehicleSpec.manufacturer} {vehicle.vehicleSpec.model}
+        </div>
+      </div>
+      <div className="mb-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Rental Rate
+        </label>
+        <div className="block w-full p-3 rounded-md border-gray-300 shadow-sm bg-gray-100">
+          ${vehicle.rental_rate} per day
+        </div>
+      </div>
+      <button
+        onClick={handleBooking}
+        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+        disabled={isLoadingBooking || isPaymentLoading !== null}
       >
-        Book Now
-      </Button>
-    </Box>
+        {isLoadingBooking || isPaymentLoading !== null ? (
+          <div className="flex items-center justify-center">
+            <ClipLoader size={24} color="white" />
+            <span> Processing...</span>
+          </div>
+        ) : (
+          "Confirm Booking"
+        )}
+      </button>
+    </div>
   );
 };
 

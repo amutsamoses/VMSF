@@ -1,5 +1,3 @@
-import { MapPin } from "lucide-react";
-
 const HowItWorks = () => {
   return (
     <div className="bg-blue-300 py-12">
