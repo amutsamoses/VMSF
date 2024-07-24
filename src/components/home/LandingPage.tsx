@@ -12,7 +12,7 @@ const LandingPage: React.FC = () => {
         backgroundPosition: "center",
       }}
     >
-      <main className="mt-10">
+      <main>
         <section className="py-20 bg-opacity-75">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <div className="max-w-xl">

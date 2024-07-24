@@ -126,7 +126,7 @@ const FeaturedVehicles: React.FC = () => {
     <div className="featured-vehicles">
       <div className="heading text-center my-8">
         <h2 className="text-3xl font-bold text-blue-600">Featured Vehicles</h2>
-        <p className="text-lg text-gray-200 mt-2">
+        <p className="text-lg text-green-700 mt-2">
           Discover our range of top-quality vehicles available for rental. We
           offer a wide variety of cars to meet your needs, from high-performance
           sports cars to reliable family vehicles.

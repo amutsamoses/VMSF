@@ -13,6 +13,8 @@ import ContactUs from "./pages/ContactUs";
 import BookingPage from "./components/bookings/BookingPage";
 import ManageVehicles from "./components/admin/dashboard/ManageVehicles";
 import ProtectedRoute from "./services/ProtectedRoute";
+import PaymentFailed from "./services/PaymentFailed";
+import PaymentSuccess from "./services/PaymentSuccessful";
 
 const App: React.FC = () => {
   return (
@@ -28,10 +30,12 @@ const App: React.FC = () => {
         <Route path="/user-dashboard" Component={UserDashboard} />
         <Route element={<ProtectedRoute />}>
           <Route path="/booking/:id" Component={BookingPage} />
+          <Route path="/contact" Component={ContactUs} />
         </Route>
         <Route path="/vehicles" Component={VehicleList} />
-        <Route path="/contact" Component={ContactUs} />
         <Route path="/manage-vehicles" Component={ManageVehicles} />
+        <Route path="/payment-successful" Component={PaymentSuccess} />
+        <Route path="/payment-cancel" Component={PaymentFailed} />
       </Routes>
     </Router>
   );

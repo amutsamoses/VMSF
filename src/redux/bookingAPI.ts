@@ -18,7 +18,7 @@ export const bookingsApi = createApi({
   endpoints: (builder) => ({
     //get bookings
     getBookings: builder.query<TBooking[], void>({
-      query: () => "/bookings",
+      query: () => "/bookings-users",
 
       //provide booking tag to be used in the cache
       providesTags: ["Booking"],

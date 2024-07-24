@@ -193,7 +193,6 @@ export default function UserDashboard() {
       icon: <DirectionsCarIcon />,
       view: "Browse Vehicle",
     },
-    { text: "Booking Form", icon: <MailIcon />, view: "Booking Form" },
     { text: "Current Booking", icon: <InboxIcon />, view: "Current Booking" },
     { text: "Booking History", icon: <MailIcon />, view: "Booking History" },
     { text: "New Tickets", icon: <InboxIcon />, view: "New Tickets" },

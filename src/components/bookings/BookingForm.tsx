@@ -63,6 +63,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
     try {
       const newBooking = await addBooking(bookingData).unwrap();
       toast.success("Booking created successfully");
+      console.log(newBooking);
 
       // Initiate payment
       handleMakePayment(newBooking.booking_id, totalAmount);
@@ -121,77 +122,86 @@ const BookingForm: React.FC<BookingFormProps> = ({ vehicle }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-6 text-center">Book Vehicle</h2>
-      <div className="mb-4">
-        <label className="block text-gray-500 text-sm font-bold mb-2">
-          Start Date
-        </label>
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden flex">
+      <div className="w-1/2 bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 p-8 flex flex-col justify-center items-center">
+        <h2 className="text-4xl font-semibold text-white mb-6">
+          Welcome Back!
+        </h2>
       </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          End Date
-        </label>
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Location
-        </label>
-        <select
-          value={locationId}
-          onChange={(e) => setLocationId(Number(e.target.value))}
-          className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        >
-          <option value="">Select a location</option>
-          {locations?.map((location: TLocation) => (
-            <option key={location.location_id} value={location.location_id}>
-              {location.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Vehicle Name
-        </label>
-        <div className="block w-full p-3 rounded-md border-gray-300 shadow-sm bg-gray-100">
-          {vehicle.vehicleSpec.manufacturer} {vehicle.vehicleSpec.model}
+      <div className="w-1/2 p-8">
+        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-700">
+          Book Vehicle
+        </h2>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            Start Date
+          </label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+          />
         </div>
-      </div>
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Rental Rate
-        </label>
-        <div className="block w-full p-3 rounded-md border-gray-300 shadow-sm bg-gray-100">
-          ${vehicle.rental_rate} per day
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            End Date
+          </label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+          />
         </div>
-      </div>
-      <button
-        onClick={handleBooking}
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-md shadow-md focus:outline-none focus:shadow-outline"
-        disabled={isLoadingBooking || isPaymentLoading !== null}
-      >
-        {isLoadingBooking || isPaymentLoading !== null ? (
-          <div className="flex items-center justify-center">
-            <ClipLoader size={24} color="white" />
-            <span> Processing...</span>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            Location
+          </label>
+          <select
+            value={locationId}
+            onChange={(e) => setLocationId(Number(e.target.value))}
+            className="block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+          >
+            <option value="">Select a location</option>
+            {locations?.map((location: TLocation) => (
+              <option key={location.location_id} value={location.location_id}>
+                {location.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            Vehicle Name
+          </label>
+          <div className="block w-full p-3 rounded-md border-gray-300 shadow-sm bg-gray-100">
+            {vehicle.vehicleSpec.manufacturer} {vehicle.vehicleSpec.model}
           </div>
-        ) : (
-          "Confirm Booking"
-        )}
-      </button>
+        </div>
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            Rental Rate
+          </label>
+          <div className="block w-full p-3 rounded-md border-gray-300 shadow-sm bg-gray-100">
+            ${vehicle.rental_rate} per day
+          </div>
+        </div>
+        <button
+          onClick={handleBooking}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-md shadow-md focus:outline-none focus:shadow-outline"
+          disabled={isLoadingBooking || isPaymentLoading !== null}
+        >
+          {isLoadingBooking || isPaymentLoading !== null ? (
+            <div className="flex items-center justify-center">
+              <ClipLoader size={24} color="white" />
+              <span className="ml-2">Processing...</span>
+            </div>
+          ) : (
+            "Confirm Booking"
+          )}
+        </button>
+      </div>
     </div>
   );
 };

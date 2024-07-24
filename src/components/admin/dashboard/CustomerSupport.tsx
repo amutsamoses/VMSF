@@ -98,7 +98,7 @@ const CustomerSupport: React.FC = () => {
           {customerSupports?.map((support: TCustomerSupport) => (
             <TableRow key={support.ticket_id}>
               <TableCell>{support.ticket_id}</TableCell>
-              <TableCell>{support.user.full_name}</TableCell>
+              <TableCell>{support?.user?.full_name}</TableCell>
               <TableCell>{support.subject}</TableCell>
               <TableCell>{support.description}</TableCell>
               <TableCell>{support.status}</TableCell>

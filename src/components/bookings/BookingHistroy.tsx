@@ -87,12 +87,12 @@ const BookingHistory = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {booking.vehicle.vehicleSpec.manufacturer}
+                    {booking.vehicle?.vehicleSpec.manufacturer}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {booking.location.name}
+                    {booking?.location?.name}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -112,9 +112,9 @@ const BookingHistory = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${booking.payments.payment_status === "Completed" ? "bg-green-100 text-green-800" : booking.payments.payment_status === "Refunded" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}`}
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${booking?.payments?.payment_status === "Completed" ? "bg-green-100 text-green-800" : booking?.payments?.payment_status === "Refunded" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}`}
                   >
-                    {booking.payments.payment_status}
+                    {booking?.payments?.payment_status}
                   </span>
                 </td>
               </tr>

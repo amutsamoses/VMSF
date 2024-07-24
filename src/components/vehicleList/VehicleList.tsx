@@ -69,7 +69,7 @@ const VehicleList: React.FC = () => {
   if (error) return <div>Error: Error Fetching</div>;
 
   return (
-    <Container style={{ backgroundColor: "#fff" }}>
+    <Container style={{ backgroundColor: "#dcdcdc", width: "100vw" }}>
       <Typography
         variant="h3"
         style={{ paddingTop: "30px", color: "black" }}

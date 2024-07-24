@@ -7,7 +7,7 @@ const WhyUs = () => {
       <div className="image-container">
         <img
           src="https://cdni.iconscout.com/illustration/premium/thumb/business-partnership-2975816-2476892.png"
-          style={{ marginTop: "50px" }}
+          style={{ marginTop: "40px" }}
           alt=""
         />
       </div>
