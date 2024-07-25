@@ -75,7 +75,7 @@ const CurrentBookings: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
+    <div className="p-10 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Current Bookings</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">

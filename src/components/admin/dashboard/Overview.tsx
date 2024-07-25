@@ -1,7 +1,7 @@
-import { Typography, Paper, Grid } from "@mui/material";
+import React from "react";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -9,78 +9,91 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { usersApi } from "../../../redux/usersAPI";
+import { bookingsApi } from "../../../redux/bookingAPI";
+import { ClipLoader } from "react-spinners";
 
-const data = [
-  { name: "January", bookings: 4000, revenue: 2400, amt: 2400 },
-  { name: "February", bookings: 3000, revenue: 1398, amt: 2210 },
-  { name: "March", bookings: 2000, revenue: 9800, amt: 2290 },
-  { name: "April", bookings: 2780, revenue: 3908, amt: 2000 },
-  { name: "May", bookings: 1890, revenue: 4800, amt: 2181 },
-  { name: "June", bookings: 2390, revenue: 3800, amt: 2500 },
-  { name: "July", bookings: 3490, revenue: 4300, amt: 2100 },
-];
+const Overview: React.FC = () => {
+  const {
+    data: bookingsData,
+    error: bookingsError,
+    isLoading: bookingsLoading,
+  } = bookingsApi.useGetBookingsQuery();
+  const {
+    data: usersData,
+    error: usersError,
+    isLoading: usersLoading,
+  } = usersApi.useGetUsersQuery();
 
-// Calculate total cars rented and total revenue collected
-const totalCarsRented = data.reduce((acc, curr) => acc + curr.bookings, 0);
-const totalRevenueCollected = data.reduce((acc, curr) => acc + curr.revenue, 0);
+  if (bookingsLoading || usersLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader size={50} color="#123abc" />
+      </div>
+    );
+  }
 
-const currentBooking = 25; // Example current booking count
+  if (bookingsError || usersError) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-600">
+        <p>Error fetching data</p>
+      </div>
+    );
+  }
 
-const Overview = () => {
+  const totalBookings = bookingsData ? bookingsData.length : 0;
+  const totalRevenue = bookingsData
+    ? bookingsData.reduce(
+        (sum, booking) => sum + (Number(booking.total_amount) || 0),
+        0
+      )
+    : 0;
+  const totalUsers = usersData ? usersData.length : 0;
+
+  const chartData =
+    bookingsData?.map((booking, index) => ({
+      name: `Month ${index + 1}`,
+      bookings: 1,
+      revenue: Number(booking.total_amount) || 0,
+    })) || [];
+
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-          <Typography variant="h6">Dashboard Overview</Typography>
-          <ResponsiveContainer width="100%" height={500}>
-            <BarChart
-              data={data}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="bookings" fill="#8884d8" />
-              <Bar dataKey="revenue" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Grid>
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-2xl font-bold mb-2">Total Bookings</h2>
+          <p className="text-3xl">{totalBookings}</p>
+        </div>
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-2xl font-bold mb-2">Total Revenue</h2>
+          <p className="text-3xl">${totalRevenue}</p>
+        </div>
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-2xl font-bold mb-2">Total Users</h2>
+          <p className="text-3xl">{totalUsers}</p>
+        </div>
+      </div>
 
-      <Grid item xs={12} sm={6} md={4}>
-        <Paper
-          sx={{ p: 2, display: "flex", flexDirection: "column", height: 150 }}
-        >
-          <Typography variant="h6">Total Cars Rented</Typography>
-          <Typography variant="h4">{totalCarsRented}</Typography>
-        </Paper>
-      </Grid>
-
-      <Grid item xs={12} sm={6} md={4}>
-        <Paper
-          sx={{ p: 2, display: "flex", flexDirection: "column", height: 150 }}
-        >
-          <Typography variant="h6">Total Revenue Collected</Typography>
-          <Typography variant="h4">${totalRevenueCollected}</Typography>
-        </Paper>
-      </Grid>
-
-      <Grid item xs={12} sm={6} md={4}>
-        <Paper
-          sx={{ p: 2, display: "flex", flexDirection: "column", height: 150 }}
-        >
-          <Typography variant="h6">Current Bookings Made</Typography>
-          <Typography variant="h4">{currentBooking}</Typography>
-        </Paper>
-      </Grid>
-    </Grid>
+      <div className="bg-white shadow rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4">
+          Revenue & Bookings Over Time
+        </h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
+            <Line type="monotone" dataKey="bookings" stroke="#82ca9d" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 };
 

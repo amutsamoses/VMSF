@@ -27,6 +27,8 @@ import AccountSettings from "./AccountSettings";
 import BookingHistory from "../../bookings/BookingHistroy";
 import BrowseVehicle from "../../bookings/BrowseVehicle";
 import CurrentBooking from "../../bookings/CurrentBooking";
+import MyTickets from "./MyTickets";
+
 import {
   LineChart,
   Line,
@@ -40,7 +42,7 @@ import {
 import BookingPage from "../../bookings/BookingPage";
 import { InboxIcon, MailIcon } from "lucide-react";
 
-const drawerWidth = 240;
+const drawerWidth = 270;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -59,7 +61,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(10)} + 1px)`,
   },
 });
 
@@ -98,7 +100,7 @@ const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   width: drawerWidth,
-  flexShrink: 0,
+  flexShrink: 8,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
   ...(open && {
@@ -120,10 +122,10 @@ const Search = styled("div")(({ theme }) => ({
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
-  width: "100%",
+  width: "1000%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
-    width: "auto",
+    width: "70%",
   },
 }));
 
@@ -195,7 +197,6 @@ export default function UserDashboard() {
     },
     { text: "Current Booking", icon: <InboxIcon />, view: "Current Booking" },
     { text: "Booking History", icon: <MailIcon />, view: "Booking History" },
-    { text: "New Tickets", icon: <InboxIcon />, view: "New Tickets" },
     { text: "My Tickets", icon: <MailIcon />, view: "My Tickets" },
     { text: "Account Settings", icon: <InboxIcon />, view: "Account Settings" },
   ];
@@ -208,7 +209,7 @@ export default function UserDashboard() {
             <Typography variant="h3">Analytics Overview</Typography>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ flex: 1 }}>
-                <ResponsiveContainer width="100%" height={500}>
+                <ResponsiveContainer width="90%" height={500}>
                   <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -284,10 +285,13 @@ export default function UserDashboard() {
             <BookingHistory />
           </>
         );
-      case "New Tickets":
-        return <Typography variant="body1">New Tickets Content</Typography>;
       case "My Tickets":
-        return <Typography variant="body1">My Tickets Content</Typography>;
+        return (
+          <>
+            <Typography variant="body1">My Tickets Content</Typography>
+            <MyTickets />
+          </>
+        );
       case "Account Settings":
         return (
           <>
@@ -313,7 +317,7 @@ export default function UserDashboard() {
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              marginRight: 5,
+              marginRight: 6,
               ...(open && { display: "none" }),
             }}
           >
@@ -359,7 +363,7 @@ export default function UserDashboard() {
               <ListItemButton
                 onClick={() => setView(item.view)}
                 sx={{
-                  minHeight: 48,
+                  minHeight: 60,
                   justifyContent: "initial",
                   px: 2.5,
                 }}
@@ -379,7 +383,7 @@ export default function UserDashboard() {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, pl: 7, mb: 100 }}>
         <DrawerHeader />
         <Typography variant="h4" gutterBottom>
           {view}
