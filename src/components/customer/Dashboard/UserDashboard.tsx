@@ -205,12 +205,10 @@ export default function UserDashboard() {
       case "Overview":
         return (
           <>
-            <Typography variant="h6" gutterBottom>
-              Analytics Overview
-            </Typography>
+            <Typography variant="h3">Analytics Overview</Typography>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ flex: 1 }}>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={500}>
                   <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -228,9 +226,7 @@ export default function UserDashboard() {
               </Box>
             </Box>
             <Box sx={{ mt: 4 }}>
-              <Typography variant="h6" gutterBottom>
-                Key Metrics
-              </Typography>
+              <Typography variant="h3">Key Metrics</Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap" }}>
                 <Box sx={{ flex: 1, p: 2 }}>
                   <Typography variant="subtitle1">Total Time Spent:</Typography>

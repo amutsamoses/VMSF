@@ -32,7 +32,7 @@ const Overview = () => {
       <Grid item xs={12}>
         <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
           <Typography variant="h6">Dashboard Overview</Typography>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={500}>
             <BarChart
               data={data}
               margin={{
