@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const AdminLogin = () => {
+const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +23,7 @@ const AdminLogin = () => {
     setError(""); // Clear any previous error
 
     // Mock authentication logic
-    if (email === "admin@example.com" && password === "password") {
+    if (email === "Optimus.admin@gmail.com" && password === "password") {
       navigate("/dashboard");
     } else {
       setError("Invalid email or password");
@@ -34,18 +34,22 @@ const AdminLogin = () => {
     <Container
       component="main"
       maxWidth="xs"
-      sx={{ backgroundColor: "white", padding: "20px", borderRadius: "8px" }}
+      sx={{
+        backgroundColor: "white",
+        padding: "20px",
+        borderRadius: "8px",
+        marginTop: "20vh",
+      }}
     >
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          marginTop: 8,
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign In
+          Admin Sign In
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField

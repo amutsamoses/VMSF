@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Typography,
   Paper,
@@ -10,7 +11,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Button,
 } from "@mui/material";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 // Sample static data for demonstration
 const summaryData = {
@@ -33,11 +37,38 @@ const recentRentals = [
   { user: "Alice Johnson", vehicle: "Ford Focus", date: "2024-07-08" },
 ];
 
-const Reports = () => {
+const Reports: React.FC = () => {
+  const generatePDF = () => {
+    const input = document.getElementById("pdfContent");
+    if (input) {
+      html2canvas(input as HTMLElement)
+        .then((canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF("p", "mm", "a4");
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+          pdf.save("report.pdf");
+        })
+        .catch((error) => {
+          console.error("Error generating PDF:", error);
+        });
+    } else {
+      console.error("Element not found");
+    }
+  };
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+        <Button variant="contained" color="primary" onClick={generatePDF}>
+          Download as PDF
+        </Button>
+        <Paper
+          id="pdfContent"
+          sx={{ p: 2, display: "flex", flexDirection: "column" }}
+        >
           <Typography variant="h6">Reports</Typography>
 
           {/* Summary Statistics */}

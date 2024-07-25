@@ -31,115 +31,110 @@ const Register: React.FC = () => {
       toast.success("Redirected to Login Page");
     } catch (err) {
       console.error("Failed to register: ", err);
-      toast.error("Failed to login ");
+      toast.error("Failed to register");
     }
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="w-1/2 bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 flex flex-col items-center justify-center">
-        <h1 className="text-white text-6xl font-bold">Join Us!</h1>
-      </div>
-      <div className="w-1/2 flex items-center justify-center bg-white">
-        <div className="w-3/4 max-w-md">
-          <h2 className="text-3xl font-bold mb-4 text-gray-900 text-center">
-            Create an Account
-          </h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                htmlFor="full_name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="full_name"
-                name="full_name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter full name"
-                className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email"
-                className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="contact_phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Contact Phone
-              </label>
-              <input
-                type="tel"
-                id="contact_phone"
-                name="contact_phone"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                placeholder="Enter contact phone"
-                className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="address"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter address"
-                className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-purple-500 text-white py-2 rounded-md hover:bg-purple-600"
-              disabled={isLoading}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold mb-4 text-gray-900 text-center">
+          Create an Account
+        </h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="full_name"
+              className="block text-sm font-medium text-gray-700"
             >
-              {isLoading ? "Registering..." : "Register"}
-            </button>
-          </form>
-          {isError && (
-            <p className="mt-4 text-center text-sm text-red-500">
-              Error: {getErrorMessage(error)}
-            </p>
-          )}
-          <p className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-500 hover:underline">
-              Login here
-            </Link>
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="full_name"
+              name="full_name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Enter full name"
+              className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
+              className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="contact_phone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Contact Phone
+            </label>
+            <input
+              type="tel"
+              id="contact_phone"
+              name="contact_phone"
+              value={contactPhone}
+              onChange={(e) => setContactPhone(e.target.value)}
+              placeholder="Enter contact phone"
+              className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Address
+            </label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter address"
+              className="form-input mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 placeholder-gray-400"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-purple-500 text-white py-2 rounded-md hover:bg-purple-600"
+            disabled={isLoading}
+          >
+            {isLoading ? "Registering..." : "Register"}
+          </button>
+        </form>
+        {isError && (
+          <p className="mt-4 text-center text-sm text-red-500">
+            Error: {getErrorMessage(error)}
           </p>
-          <p className="mt-4 text-center text-sm">
-            Home Page?{" "}
-            <Link to="/" className="text-blue-500 hover:underline">
-              Home
-            </Link>
-          </p>
-        </div>
+        )}
+        <p className="mt-4 text-center text-sm">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-500 hover:underline">
+            Login here
+          </Link>
+        </p>
+        <p className="mt-4 text-center text-sm">
+          Home Page?{" "}
+          <Link to="/" className="text-blue-500 hover:underline">
+            Home
+          </Link>
+        </p>
       </div>
     </div>
   );
