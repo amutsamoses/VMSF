@@ -1,28 +1,23 @@
-import React from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { logout } from "../../redux/slices/authSlice";
-
-const Logout: React.FC = () => {
+const Logout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
+    navigate("/");
   };
-
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <p className="text-lg font-semibold mb-4">
-          Are you sure you want to log out?
-        </p>
-        <button
-          onClick={handleLogout}
-          className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
+    <ListItem button onClick={handleLogout} className="hover:bg-gray-700">
+      <ListItemIcon className="text-white">
+        <ExitToAppIcon />
+      </ListItemIcon>
+      <ListItemText primary="Logout" />
+    </ListItem>
   );
 };
 

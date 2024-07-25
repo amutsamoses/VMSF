@@ -209,7 +209,7 @@ export default function UserDashboard() {
             <Typography variant="h3">Analytics Overview</Typography>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ flex: 1 }}>
-                <ResponsiveContainer width="90%" height={500}>
+                <ResponsiveContainer width="100%" height={500}>
                   <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -317,7 +317,7 @@ export default function UserDashboard() {
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              marginRight: 6,
+              marginRight: 3,
               ...(open && { display: "none" }),
             }}
           >
@@ -370,8 +370,8 @@ export default function UserDashboard() {
               >
                 <ListItemIcon
                   sx={{
-                    minWidth: 0,
-                    mr: 3,
+                    minWidth: 5,
+                    mr: 2,
                     justifyContent: "center",
                   }}
                 >
@@ -383,7 +383,7 @@ export default function UserDashboard() {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, pl: 7, mb: 100 }}>
+      <Box component="main" sx={{ flexGrow: 1, pl: 1, ml: 4, mb: 100 }}>
         <DrawerHeader />
         <Typography variant="h4" gutterBottom>
           {view}

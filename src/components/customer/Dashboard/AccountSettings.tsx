@@ -253,8 +253,7 @@ const AccountSettings: React.FC = () => {
                         />
                       </Button>
                       <Typography variant="body2">
-                        For best results, use an image at least 128px by 128px
-                        in .jpg format
+                        upload profile pic
                       </Typography>
                     </Grid>
                   </Grid>

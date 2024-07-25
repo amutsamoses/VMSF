@@ -23,7 +23,7 @@ const AdminLogin: React.FC = () => {
     setError(""); // Clear any previous error
 
     // Mock authentication logic
-    if (email === "Optimus.admin@gmail.com" && password === "password") {
+    if (email === "dave.green@example.com" && password === "password") {
       navigate("/dashboard");
     } else {
       setError("Invalid email or password");
