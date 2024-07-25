@@ -169,10 +169,10 @@ const data = [
 ];
 
 const analyticsData = {
-  totalTimeSpent: "350 hours",
-  averageRentals: "45 rentals",
-  annualRentals: "540 rentals",
-  monthlyRentals: "45 rentals",
+  totalTimeSpent: "30 hours",
+  averageRentals: "23 rentals",
+  annualRentals: "78 rentals",
+  monthlyRentals: "6 rentals",
 };
 
 export default function UserDashboard() {
@@ -389,7 +389,7 @@ export default function UserDashboard() {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, ml: 2 }}>
+      <Box component="main" sx={{ flexGrow: 1, ml: 6 }}>
         {" "}
         {/* Added spacing */}
         <DrawerHeader />
