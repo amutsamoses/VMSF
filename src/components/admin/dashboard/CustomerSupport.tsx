@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { customerSupportApi } from "../../../redux/customerAPI";
 import { TCustomerSupport } from "../../../types";
+import { toast } from "react-toastify";
 
 const CustomerSupport: React.FC = () => {
   const { data: customerSupports, refetch } =
@@ -68,6 +69,7 @@ const CustomerSupport: React.FC = () => {
       }
     } else {
       await createCustomerSupport(form);
+      toast.success("Successful");
     }
     refetch();
     handleCloseDialog();

@@ -13,6 +13,7 @@ import {
 import { locationsApi } from "../../../redux/locationAPI";
 import { TLocation } from "../../../types";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 const LocationBranches = () => {
   const [locations, setLocations] = useState<TLocation[]>([]);
@@ -71,6 +72,7 @@ const LocationBranches = () => {
       await createLocation({ name, address });
     }
     setOpen(false);
+    toast.success("Successful");
   };
 
   const handleDelete = async (locationId: number) => {

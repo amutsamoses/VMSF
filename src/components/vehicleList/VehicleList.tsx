@@ -48,15 +48,16 @@ const VehicleList: React.FC = () => {
     if (!vehicle || !vehicle.vehicleSpec) {
       return false;
     }
+
     return (
-      vehicle.vehicleSpec.manufacturer
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) &&
-      (filterManufacturer
-        ? vehicle.vehicleSpec.manufacturer === filterManufacturer
-        : true) &&
-      (filterYear ? vehicle.vehicleSpec.year === parseInt(filterYear) : true) &&
-      (filterColor ? vehicle.vehicleSpec.color === filterColor : true)
+      (!searchTerm ||
+        vehicle.vehicleSpec.manufacturer
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())) &&
+      (!filterManufacturer ||
+        vehicle.vehicleSpec.manufacturer === filterManufacturer) &&
+      (!filterYear || vehicle.vehicleSpec.year === parseInt(filterYear)) &&
+      (!filterColor || vehicle.vehicleSpec.color === filterColor)
     );
   });
 
